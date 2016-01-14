@@ -47,9 +47,9 @@ app.controller('mapsPageController', ['$scope', '$http', 'httpService', '$sce', 
     };
 
     //establish tweet relevancy criteria; 
-    var numOfFollowersToBeRelevant = 10000;
-    var numOfRetweetsToBeRelevant = 50; 
-    var maxNumOfRelevantTweetsAllowed = 15;
+    var numOfFollowersToBeRelevant = 0;
+    var numOfRetweetsToBeRelevant = 0; 
+    var maxNumOfRelevantTweetsAllowed = 500000000;
 
 
     //////////////////////////////////////////SET UP HEAT MAP///////////////////////////////////////////////////

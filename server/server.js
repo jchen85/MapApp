@@ -11,6 +11,7 @@ var routes = require('./routes/routes.js');
 var socketio = require('socket.io');
 var TwitterAPI = require('./controllers/twitterApiController.js');
 var textSearch = require('./textSearch.js');
+var fs = require('fs');
 
 // **Important password and keys **
 if(!process.env.CONSUMER_KEY){
@@ -18,15 +19,15 @@ if(!process.env.CONSUMER_KEY){
 }
 
 // Setup server to listen on process.en.PORT delegating to port 3000
-var port = process.env.PORT || 3000;
-var key = process.env.DB_USER || KEYS.user;
-var db_pass = process.env.DB_PASSWORD || KEYS.password;
+var port = 3000;
+// var key = process.env.DB_USER || KEYS.user;
+// var db_pass = process.env.DB_PASSWORD || KEYS.password;
 
 //init socketStream to null
 var stream = null;
 var twitterTopic ;
 // ** NEED TO IMPLEMENT Setup server to listen to MongoLab URI delegating to local db 
-var mapDB = process.env.MONGOLAB_URI || 'mongodb://' + key + ':' + db_pass + '@ds039095.mongolab.com:39095/users-tweets';
+var mapDB = process.env.MONGOLAB_URI || 'mongodb://localhost/MapApp';
 mongoose.connect(mapDB);
 
 // Set Up Authorization 
@@ -71,8 +72,9 @@ io.sockets.on('connection', function(socket) {
      console.log('connected');
     
       TwitterAPI.streamTweets(twitterTopic, function(data) {
-        if(data.coordinates){
-          if(data.coordinates !== null){
+
+        if(data.user.geo_enabled){
+          if(data.coordinates !== null || data.place.bounding_box.coordinates !== null){
             
             var tweetObject = data;
             var topicExists;
@@ -94,7 +96,7 @@ io.sockets.on('connection', function(socket) {
                 friends_count: tweetObject.user['friends_count'],
                 timezone: tweetObject.user['time_zone'],
                 coordinates: tweetObject['coordinates'],
-                geo: tweetObject['geo'],
+                geo: tweetObject['geo'] || tweetObject['place']['bounding_box']['coordinates'][0],
                 place: tweetObject['place'],
                 tweetText: tweetObject['text'],
                 tweetTime: tweetObject['created_at'],
@@ -113,6 +115,8 @@ io.sockets.on('connection', function(socket) {
               // });
             }
             //Tweet Object that has been scrubbed for relevant data 
+
+          } else {
 
           }
         }
