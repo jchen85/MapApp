@@ -52,11 +52,10 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
     nodes.forEach(function (node) {
       db.save(node, function (err, savedNode) {
         if (err) throw err;
-        if (parent_id !== null) {
-          db.relate(parent_id, 'follows', savedNode.id, function (err, relationship) {
-            console.log(relationship);
-          });
-        }
+
+        db.relate(child_id, 'follows', savedNode.id, function (err, relationship) {
+          console.log(relationship);
+        });
 
         saveToNodes(screen_name, child_id, savedNode.screen_name, savedNode.id)
       });
@@ -72,16 +71,16 @@ db.save({'screen_name': 'KimKardashian', 'geo': [-118.659776, 34.127826], 'twitt
 });
 
 
-var cypher = ""
-           + "MATCH (n)"
-           + "RETURN n;";
-           // + "ORDER BY n.name";
-db.query(cypher, function(err, results) {
-  if (err) throw err;
-  console.log("results", results);
-  results.forEach(function (result) {
-    db.relationships(result.id, 'all', 'follows', function (err, relationships) {
-      console.log(relationships);
-    });
-  });
-});
+// var cypher = ""
+//            + "MATCH (n)"
+//            + "RETURN n;";
+//            // + "ORDER BY n.name";
+// db.query(cypher, function(err, results) {
+//   if (err) throw err;
+//   console.log("results", results);
+//   results.forEach(function (result) {
+//     db.relationships(result.id, 'all', 'follows', function (err, relationships) {
+//       console.log(relationships);
+//     });
+//   });
+// });
