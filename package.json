@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/FragrantNumerator/MapApp#readme",
   "dependencies": {
+    "bluebird": "^3.1.1",
     "body-parser": "^1.14.2",
     "bower": "^1.7.2",
     "express": "^4.13.3",
