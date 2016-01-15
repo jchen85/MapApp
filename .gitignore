@@ -14,3 +14,6 @@ config.js
 Dockerfile
 docker-compose.yml
 
+### Data ###
+./server/data/
+./server/data2/
