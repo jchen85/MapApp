@@ -82,11 +82,15 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
     //double chck
 };
 
-db.save({'screen_name': 'KimKardashian', 'geo': [-118.659776, 34.127826], 'twitter_id': 25365536, 'followers': 39046765}, function (err, data) {
-  if (err) throw err;
-  saveToNodes('origin', null, 'KimKardashian', data.id);
-});
+// db.save({'screen_name': 'KimKardashian', 'geo': [-118.659776, 34.127826], 'twitter_id': 25365536, 'followers': 39046765}, function (err, data) {
+//   if (err) throw err;
+//   saveToNodes('origin', null, 'KimKardashian', data.id);
+// });
 
+db.save({'screen_name': 'iamsrk', 'geo': [72.9585876, 18.9867273], 'twitter_id': 101311381, 'followers': 17323653}, function (err, data) { 
+  if (err) throw err;
+  saveToNodes('origin', null, 'iamsrk', data.id);
+});
 
 // var cypher = ""
 //            + "MATCH (n) "
