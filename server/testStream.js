@@ -31,34 +31,38 @@ var T = new Twit(config.twitter);
 
 
 var getFriends = function(screen_name, depth, parent) {
-  var writeTo = fs.createWriteStream('./data/' + parent + '_' + screen_name, {flags: 'w'});
+  if (depth < 4) {
+    var writeTo = fs.createWriteStream('./data/' + parent + '_' + screen_name, {flags: 'w'});
 
-  T.get('friends/list', { screen_name: screen_name, count: 200 },  function (err, data, response) {
-    if (err) {
-      console.log(err);
-    } else {
-      writeTo.write(JSON.stringify(data));
+    T.get('friends/list', { screen_name: screen_name, count: 200 },  function (err, data, response) {
+      if (err) {
+        console.log(err);
+      } else {
+        writeTo.write(JSON.stringify(data));
 
-      var topFour = data.users
-      .filter(function (user) {
-        if (user.status) {
-          return user.status.coordinates || user.status.place;
-        } else {
-          return false;
-        }
-      })
-      .sort(function (a, b) {
-        return b.followers_count - a.followers_count;
-      })
-      .splice(0, 10);
+        var topFour = data.users
+        .filter(function (user) {
+          if (user.status) {
+            return user.status.coordinates || user.status.place;
+          } else {
+            return false;
+          }
+        })
+        .sort(function (a, b) {
+          return b.followers_count - a.followers_count;
+        })
+        .splice(0, 10);
 
-      topFour.forEach(function (user) {
-        requestQueue.push(function() {
-          getFriends(user.screen_name, depth + 1, screen_name);
+        topFour.forEach(function (user) {
+          requestQueue.push(function() {
+            getFriends(user.screen_name, depth + 1, screen_name);
+          });
         });
-      });
-    }
-  });
+      }
+    });
+  } else {
+    return;
+  }
 };
 
 var requestQueue = [];
@@ -99,7 +103,7 @@ var checkRateLimits = function() {
 };
 
 requestQueue.push(function() {
-  getFriends('BarackObama', 0, 'origin');
+  getFriends('KAKA', 0, 'origin');
 });
 
 checkRateLimits();

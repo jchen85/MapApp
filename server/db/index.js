@@ -63,7 +63,7 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
 
         if (results.length > 0) {
           db.relate(child_id, 'follows', results[0].id, function (err, relationship) {
-            console.log(relationship);
+            saveToNodes(screen_name, child_id, results[0].screen_name, results[0].id);
           });
         } else {
           db.save(node, function (err, savedNode) {
@@ -86,10 +86,42 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
 //   saveToNodes('origin', null, 'KimKardashian', data.id);
 // });
 
-db.save({'screen_name': 'BarackObama', 'geo': [-77.0376402. 38.8976408], 'twitter_id': 813286, 'followers': 68454789}, function (err, data) { 
+// var cypher = ""
+//      + "MATCH (n) "
+//      + "WHERE n.screen_name='" + 'KimKardashian' + "' "
+//      + "RETURN n;";
+
+// db.query(cypher, function(err, results) {
+//   if (err) throw err;
+
+//   if (results.length > 0) {
+//     saveToNodes('origin', null, 'KimKardashian', results[0].id);
+//   } else {
+//     db.save({'screen_name': 'KimKardashian', 'geo': [-118.659776, 34.127826], 'twitter_id': 25365536, 'followers': 39046765}, function (err, data) { 
+//       if (err) throw err;
+//       saveToNodes('origin', null, 'KimKardashian', data.id);
+//     });
+//   }
+// });
+
+var cypher = ""
+     + "MATCH (n) "
+     + "WHERE n.screen_name='" + 'narendramodi' + "' "
+     + "RETURN n;";
+
+db.query(cypher, function(err, results) {
   if (err) throw err;
-  saveToNodes('origin', null, 'BarackObama', data.id);
+
+  if (results.length > 0) {
+    saveToNodes('origin', null, 'narendramodi', results[0].id);
+  } else {
+    db.save({ 'screen_name': 'narendramodi', 'geo': [ 77.2035555, 28.6151554 ], 'twitter_id': 18839785, 'followers': 17359460 }, function (err, data) { 
+      if (err) throw err;
+      saveToNodes('origin', null, 'narendramodi', data.id);
+    });
+  }
 });
+
 
 // var cypher = ""
 //            + "MATCH (n) "
