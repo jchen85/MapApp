@@ -10,19 +10,19 @@ var T = new Twit(config.twitter);
 //      });
 
 
-var stream = T.stream('statuses/sample');
-// var w = fs.createWriteStream('./data/stream', {flags:'w'});
+// var stream = T.stream('statuses/sample');
+// // var w = fs.createWriteStream('./data/stream', {flags:'w'});
 
-stream.on('tweet', function (tweet) {
-  // w.write(JSON.stringify(tweet) + '\n');
-  var targets = ['KimKardashian', 'POTUS', 'iamsrk', 'katyperry', 'justinbieber', 'taylorswift13',
-   'barackobama', 'drake', 'theweeknd'];
-  tweet.entities.user_mentions.forEach(function (mention) {
-    if (targets.indexOf(mention.screen_name) > -1) {
-      console.log(tweet); 
-    }
-  });
-});
+// stream.on('tweet', function (tweet) {
+//   // w.write(JSON.stringify(tweet) + '\n');
+//   var targets = ['KimKardashian', 'POTUS', 'iamsrk', 'katyperry', 'justinbieber', 'taylorswift13',
+//    'barackobama', 'drake', 'theweeknd'];
+//   tweet.entities.user_mentions.forEach(function (mention) {
+//     if (targets.indexOf(mention.screen_name) > -1) {
+//       console.log(tweet); 
+//     }
+//   });
+// });
 
 // T.get('statuses/user_timeline', { screen_name: 'dan_abramov', count: 200 },  function (err, data, response) {
 //   if (err) throw err;
@@ -83,9 +83,9 @@ stream.on('tweet', function (tweet) {
 
 // getFriends('KimKardashian', 0, 'origin');
 
-// T.get('/users/lookup', {screen_name: 'POTUS'}, function (err, data, response) {
-//   console.log(data);
-// });
+T.get('/users/lookup', {screen_name: 'BarackObama'}, function (err, data, response) {
+  console.log(data);
+});
 
 // T.get('/statuses/user_timeline', {screen_name: 'iamsrk'}, function (err, data, response) {
 //   console.log(data[0].coordinates);

@@ -39,12 +39,12 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
     var nodes = users.map(function (user) {
       if (user.status) {
         if (user.status.coordinates !== null || user.status.place !== null) {
-        var node = {};
+          var node = {};
 
-        node.screen_name = user.screen_name;
-        node.geo = user.status.coordinates ? user.status.coordinates.coordinates : user.status.place.bounding_box.coordinates[0][0];
-        node.twitter_id = user.id;
-        node.followers = user.followers_count;
+          node.screen_name = user.screen_name;
+          node.geo = user.status.coordinates ? user.status.coordinates.coordinates : user.status.place.bounding_box.coordinates[0][0];
+          node.twitter_id = user.id;
+          node.followers = user.followers_count;
         }
       }
       return node;
@@ -86,9 +86,9 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
 //   saveToNodes('origin', null, 'KimKardashian', data.id);
 // });
 
-db.save({'screen_name': 'iamsrk', 'geo': [72.9585876, 18.9867273], 'twitter_id': 101311381, 'followers': 17323653}, function (err, data) { 
+db.save({'screen_name': 'BarackObama', 'geo': [-77.0376402. 38.8976408], 'twitter_id': 813286, 'followers': 68454789}, function (err, data) { 
   if (err) throw err;
-  saveToNodes('origin', null, 'iamsrk', data.id);
+  saveToNodes('origin', null, 'BarackObama', data.id);
 });
 
 // var cypher = ""

@@ -63,50 +63,50 @@ var getFriends = function(screen_name, depth, parent) {
 
 var requestQueue = [];
 
-// var handleRequestQueue = function () {
-//   // if rate limits OK
-//   if (rateLimitsOK) {
-//     requestQueue.unshift().call();
-//     handleRequestQueue()
-//   } else {
-//     setTimeout(function() {
-//       handleRequestQueue();
-//     }, 30000);
-//   }
-// };
+var handleRequestQueue = function () {
+  // if rate limits OK
+  if (rateLimitsOK) {
+    requestQueue.unshift().call();
+    handleRequestQueue();
+  } else {
+    setTimeout(function() {
+      handleRequestQueue();
+    }, 30000);
+  }
+};
 
 
-// var getLimit = function() {
-//   return new Promise(function (resolve, reject) {
-//     T.get('application/rate_limit_status', function (err, data, response) {
-//       if (err) { reject(err); }
-//       resolve(data);
-//     });
-//   });
-// };
+var getLimit = function() {
+  return new Promise(function (resolve, reject) {
+    T.get('application/rate_limit_status', function (err, data, response) {
+      if (err) { reject(err); }
+      resolve(data);
+    });
+  });
+};
 
-// var checkRateLimits = function() {
-//   getLimit().then(function(data) { 
-//     if (data.resources.friends['/friends/list'].remaining > 0 && requestQueue.length > 0) {
-//       requestQueue.shift().call();
-//       checkRateLimits();
-//     } else {
-//       setTimeout(function() {
-//         checkRateLimits();
-//       }, 10000);
-//     }
-//   });
-// };
+var checkRateLimits = function() {
+  getLimit().then(function(data) { 
+    if (data.resources.friends['/friends/list'].remaining > 0 && requestQueue.length > 0) {
+      requestQueue.shift().call();
+      checkRateLimits();
+    } else {
+      setTimeout(function() {
+        checkRateLimits();
+      }, 10000);
+    }
+  });
+};
 
-// requestQueue.push(function() {
-//   getFriends('BarackObama', 0, 'origin');
-// });
-
-// checkRateLimits();
-
-T.get('application/rate_limit_status',  function (err, data, response) {
-  if (err) throw err;
-  console.log(data.resources.friends['/friends/list']);
-  console.log(data.resources.followers['/followers/list']);
-  console.log(data.resources.application['/application/rate_limit_status']);
+requestQueue.push(function() {
+  getFriends('BarackObama', 0, 'origin');
 });
+
+checkRateLimits();
+
+// T.get('application/rate_limit_status',  function (err, data, response) {
+//   if (err) throw err;
+//   console.log(data.resources.friends['/friends/list']);
+//   console.log(data.resources.followers['/followers/list']);
+//   console.log(data.resources.application['/application/rate_limit_status']);
+// });
