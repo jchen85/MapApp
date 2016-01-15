@@ -27,35 +27,58 @@ var w = fs.createWriteStream('./data/stream', {flags:'w'});
 //   });
 // });
 
-// var getFriends = function(screen_name, depth, parent) {
-//   setTimeout(function () {
-//     if (depth < 3) {
-//       var writeTo = fs.createWriteStream('./data/' + parent + '_' + screen_name, {flags: 'w'});
-//       T.get('followers/list', { screen_name: screen_name, count: 200 },  function (err, data, response) {
-//         if (err) {
-//           console.log(err);
-//         } else {
+var requestCount = 0;
 
-//           writeTo.write(JSON.stringify(data));
+var getFriends = function(screen_name, depth, parent) {
+  if (requestCount >= 14) {
+    console.log('setting time out, request count:', requestCount);
+    console.log('Time', new Date().setUTCHours(4));
+    setTimeout(function() {
+    console.log('starting new 15-minute wait')
+      requestCount = 0;
+      getFriends(screen_name, depth, parent);
+    }, 1100000);
+  } else {
+    requestCount++;
+    setTimeout(function () {
+      if (depth < 10 && requestCount < 15) {
+        var writeTo = fs.createWriteStream('./data/' + parent + '_' + screen_name, {flags: 'w'});
+        T.get('friends/list', { screen_name: screen_name, count: 200 },  function (err, data, response) {
+          if (err) {
+            console.log(err);
+          } else {
 
-//           var topFour = data.users.sort(function (a, b) {
-//             return b.followers_count - a.followers_count;
-//           }).splice(0, 2);
+            writeTo.write(JSON.stringify(data));
 
-//           topFour.forEach(function (user) {
-//             getFriends(user.screen_name, depth + 1, screen_name);
-//           });
-//         }
-//       });
-//     }
-    
-//   }, Math.random() * 5);
-// };
+            var topFour = data.users
+            .filter(function (user) {
+              if (user.status) {
+                return user.status.coordinates || user.status.place;
+              } else {
+                return false;
+              }
+            })
+            .sort(function (a, b) {
+              return b.followers_count - a.followers_count;
+            })
+            .splice(0, 10);
 
-// getFriends('dan_abramov', 0, 'origin');
+            topFour.forEach(function (user) {
+              getFriends(user.screen_name, depth + 1, screen_name);
+            });
+          }
+        });
+      }
+      
+    }, (Math.random() * 120000) + 30000);
+  }
+};
 
-T.get('application/rate_limit_status',  function (err, data, response) {
-  if (err) throw err;
-  console.log(data);
-  w.write(JSON.stringify(data));
-});
+getFriends('POTUS', 0, 'origin');
+
+// T.get('application/rate_limit_status',  function (err, data, response) {
+//   if (err) throw err;
+//   console.log(data.resources.friends['/friends/list']);
+//   console.log(data.resources.followers['/followers/list']);
+//   w.write(JSON.stringify(data));
+// });

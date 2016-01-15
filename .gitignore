@@ -15,5 +15,5 @@ Dockerfile
 docker-compose.yml
 
 ### Data ###
-./server/data/
-./server/data2/
+server/data/
+server/data2/

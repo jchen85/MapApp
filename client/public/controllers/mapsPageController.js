@@ -110,7 +110,7 @@ app.controller('mapsPageController', ['$scope', '$http', 'httpService', '$sce', 
 
         ///////////////////////////////////PLACE ALL INCOMING TWEETS ON MAP///////////////////////////////////////
 
-        var tweetLocation = new google.maps.LatLng(data["coordinates"]["coordinates"][1], data["coordinates"]["coordinates"][0]);
+        var tweetLocation = new google.maps.LatLng(data["coordinates"][1], data["coordinates"][0]);
         
         heatmap.data.push(tweetLocation);
         

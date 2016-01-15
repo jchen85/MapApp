@@ -74,7 +74,7 @@ io.sockets.on('connection', function(socket) {
       TwitterAPI.streamTweets(twitterTopic, function(data) {
 
         if(data.user.geo_enabled){
-          if(data.coordinates !== null || data.place.bounding_box.coordinates !== null){
+          if(data.coordinates !== null || data.place !== null){
             
             var tweetObject = data;
             var topicExists;
@@ -85,6 +85,8 @@ io.sockets.on('connection', function(socket) {
             }
             //creating an object with useful properties
             if (twitterTopic === undefined || topicExists === true) {
+              // console.log(tweetObject['coordinates']);
+              // console.log(tweetObject['place']['bounding_box']['coordinates'][0]);
               var scrubbedTweetObject = {
                 name: tweetObject.user['name'],
                 handle: tweetObject.user['screen_name'],
@@ -95,8 +97,8 @@ io.sockets.on('connection', function(socket) {
                 followers_count: tweetObject.user['followers_count'], 
                 friends_count: tweetObject.user['friends_count'],
                 timezone: tweetObject.user['time_zone'],
-                coordinates: tweetObject['coordinates'],
-                geo: tweetObject['geo'] || tweetObject['place']['bounding_box']['coordinates'][0],
+                coordinates: tweetObject['coordinates'] ? tweetObject['coordinates']['coordinates'] : tweetObject['place']['bounding_box']['coordinates'][0][0],
+                geo: tweetObject['geo'],
                 place: tweetObject['place'],
                 tweetText: tweetObject['text'],
                 tweetTime: tweetObject['created_at'],
