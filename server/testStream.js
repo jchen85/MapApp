@@ -27,7 +27,20 @@ var w = fs.createWriteStream('./data/stream', {flags:'w'});
 //   });
 // });
 
+var requestQueue = [];
+
 var requestCount = 0;
+
+var handleRequestQueue = function () {
+  // if rate limits OK
+  if (rateLimitsOK) {
+    requestQueue.pop().call()
+  } else {
+    setTimeout(function() {
+      handleRequestQueue()
+    }, 30000);
+  }
+};
 
 var getFriends = function(screen_name, depth, parent) {
   if (requestCount >= 14) {
@@ -39,11 +52,11 @@ var getFriends = function(screen_name, depth, parent) {
       getFriends(screen_name, depth, parent);
     }, 1100000);
   } else {
-    requestCount++;
     setTimeout(function () {
       if (depth < 10 && requestCount < 15) {
         var writeTo = fs.createWriteStream('./data/' + parent + '_' + screen_name, {flags: 'w'});
         T.get('friends/list', { screen_name: screen_name, count: 200 },  function (err, data, response) {
+          requestCount++;
           if (err) {
             console.log(err);
           } else {
@@ -68,13 +81,15 @@ var getFriends = function(screen_name, depth, parent) {
             });
           }
         });
+      } else {
+        getFriends(arguments[0], arguments[1], arguments[2]);
       }
       
-    }, (Math.random() * 120000) + 30000);
+    }, (Math.random() * 5000) + 1000);
   }
 };
 
-getFriends('POTUS', 0, 'origin');
+getFriends('BarackObama', 0, 'origin');
 
 // T.get('application/rate_limit_status',  function (err, data, response) {
 //   if (err) throw err;

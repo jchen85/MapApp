@@ -79,7 +79,6 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
       });
     });
   });
-    //double chck
 };
 
 // db.save({'screen_name': 'KimKardashian', 'geo': [-118.659776, 34.127826], 'twitter_id': 25365536, 'followers': 39046765}, function (err, data) {
