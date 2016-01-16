@@ -5,6 +5,7 @@ var path = require('path');
 var twitterApiController = require('../controllers/twitterApiController.js');
 var UserController = require('../controllers/userController.js');
 var passport = require('passport');
+var graphDB = require('../db/graphdb.js');
 
 var isLoggedIn = function(req, res, next) {
 
@@ -100,6 +101,12 @@ router.put('/api/users/:username', function(req, res) {
 
 router.get('/signup', function(req, res) {
   res.sendFile(path.join(__dirname, '../../client/views/signup.html'));
+});
+
+router.get('/data/:username', function (req, res) {
+  graphDB.fetchRelationships(req.params.username, function (data) {
+    res.end(JSON.stringify(data));
+  });
 });
 
 module.exports = router;

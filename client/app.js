@@ -1,4 +1,4 @@
-var app = angular.module('app', ['signup', 'renderMap', 'renderMapRelational', 'ngAnimate', 'ngRoute'])
+var app = angular.module('app', ['signup', 'renderMap', 'renderMapRelational', 'renderMapAnimated', 'ngAnimate', 'ngRoute'])
   .controller('mapsPageController', ['$scope', '$http', function ($scope, $http){
 }])
 
@@ -10,6 +10,9 @@ var app = angular.module('app', ['signup', 'renderMap', 'renderMapRelational', '
   })
   .when('/relational', {
     templateUrl: 'client/views/relational.html',
+  })
+  .when('/animated', {
+    templateUrl: 'client/views/animated.html',
   })
 
 

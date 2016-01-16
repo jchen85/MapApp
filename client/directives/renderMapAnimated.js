@@ -1,9 +1,9 @@
-var renderMapRelational = angular.module('renderMapRelational', []);
+var renderMapAnimated = angular.module('renderMapAnimated', []);
 
-renderMapRelational.directive('renderMapRelational', function(){
+renderMapAnimated.directive('renderMapAnimated', function (Data){
 
   //define function to be attributed to the link property on the returned object below
-  var link = function(scope, element, attrs) {
+  var link = function(scope, element, attrs, $http) {
       //define map elements/styles
 
       if(map){
@@ -13,26 +13,25 @@ renderMapRelational.directive('renderMapRelational', function(){
     var map;
 
       //define function that will inititialize the map
-    var initMap = function() {
+    var initMap = function(collection) {
       if (map === void 0) {
-          d3.json("client/directives/modi.json", function(error,collection) {
-            console.log(collection);
-            if (error) { console.log('error reading json', error); }
             function reformat(array){
               var data = [];
               array.map(function(d,i){
                 data.push({
-                  id: d.row[0].twitter_id,
+                  id: d.n.twitter_id,
                   type: "Feature",
                   geometry: {
-                    coordinates: [+d.row[0].geo[0], +d.row[0].geo[1]],
+                    coordinates: [+d.n.geo[0], +d.n.geo[1]],
                     type:'Point'
                   }
                 });
               });
+              console.log('reformatted data',data);
               return data;
             }
             var geoData = {type: 'FeatureCollection', features: reformat(collection.data)};
+            console.log('geoData', geoData)
             var qtree = d3.geom.quadtree(geoData.features.map(function (data, i) {
             return {
               x: data.geometry.coordinates[0],
@@ -129,7 +128,7 @@ renderMapRelational.directive('renderMapRelational', function(){
             return (Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180)) * 20037508.34 / 180;
         }
         var cscale = d3.scale.linear().domain([1, 3]).range(["#ff0000", "#ff6a00", "#ffd800", "#b6ff00", "#00ffff", "#0094ff"]);//"#00FF00","#FFA500"
-        var leafletMap = L.map('map2',  {center: [37.8, 20], zoom: 3, minZoom:2} );
+        var leafletMap = L.map('map3',  {center: [37.8, 20], zoom: 3, minZoom:2} );
         window.map = leafletMap;
         L.tileLayer("http://{s}.sm.mapstack.stamen.com/(toner-lite,$fff[difference],$fff[@23],$fff[hsl-saturation@20])/{z}/{x}/{y}.png", {continuousWorld: false, noWrap: true }).addTo(leafletMap);
 
@@ -164,15 +163,15 @@ renderMapRelational.directive('renderMapRelational', function(){
           var count2 = 0;
         collection.data.forEach(function(obj) {
           count2++;
-          if (typeof obj.row[0].geo[1] === 'number' &&
-            typeof obj.row[0].geo[0] === 'number' &&
-            typeof obj.row[1].geo[1] === 'number' &&
-            typeof obj.row[1].geo[0] === 'number' &&
-            (obj.row[0].geo[1] !== obj.row[1].geo[1] && obj.row[0].geo[0] !== obj.row[1].geo[0])
+          if (typeof obj.n.geo[1] === 'number' &&
+            typeof obj.n.geo[0] === 'number' &&
+            typeof obj.m.geo[1] === 'number' &&
+            typeof obj.m.geo[0] === 'number' &&
+            (obj.n.geo[1] !== obj.m.geo[1] && obj.n.geo[0] !== obj.m.geo[0])
             ) {
 
             console.log(obj);
-            drawLine([obj.row[0].geo[1], obj.row[0].geo[0]], [obj.row[1].geo[1], obj.row[1].geo[0]])
+            drawLine([obj.n.geo[1], obj.n.geo[0]], [obj.m.geo[1], obj.m.geo[0]])
           }
         });
         console.log('count of lines', count2);
@@ -194,6 +193,8 @@ renderMapRelational.directive('renderMapRelational', function(){
             console.log(collection)
 
             var bounds = path.bounds({ type: "FeatureCollection", features: subset });
+            console.log('subset',subset)
+            console.log('bounds',bounds)
             var topLeft = bounds[0];
             var bottomRight = bounds[1];
 
@@ -203,17 +204,11 @@ renderMapRelational.directive('renderMapRelational', function(){
               .style("left", topLeft[0] + "px")
               .style("top", topLeft[1] + "px");
 
-            // svg.attr("width", 100)
-            //   .attr("height", 100)
-            //   .style("left", 100 + "px")
-            //   .style("top", 100 + "px");
-
 
             g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
             var start = new Date();
-            console.log('bounds',bounds);
-            console.log('subset',subset);
+
             var points = g.selectAll("path")
                           .data(subset, function (d) {
                               return d.id;
@@ -224,11 +219,7 @@ renderMapRelational.directive('renderMapRelational', function(){
             points.attr("d", path);
             points.attr('class', 'nodes');
 
-            points.style("fill-opacity", function (d) {
-                if (d.group) {
-                    return (d.group * 0.1) + 0.2;
-                }
-            });
+            // points.style("fill-opacity", .5);
 
             // var lines = g.selectAll('line')
             //             .data(geoData, function (d) {
@@ -240,21 +231,24 @@ renderMapRelational.directive('renderMapRelational', function(){
 
         }
         function mapmove(e) {
-            var mapBounds = leafletMap.getBounds();
+            var mapBounds = leafletMap.getBounds();            
+            console.log('geoData', geoData)
+            console.log('qtree',qtree);
+            console.log('mapBounds',mapBounds);
             var subset = search(qtree, mapBounds.getWest(), mapBounds.getSouth(), mapBounds.getEast(), mapBounds.getNorth());
             console.log("subset: " + subset.length);
 
-            redrawSubset(subset);
+            redrawSubset(geoData.features);
 
         }
 
-
-
-          })
       }
     };
 
-      initMap();
+    Data.getData().then(function (data) {
+      console.log(data);
+      initMap(data);
+    });
 
 
   };
@@ -269,3 +263,13 @@ renderMapRelational.directive('renderMapRelational', function(){
   };
 });
 
+renderMapAnimated.factory('Data', function ($http) {
+  return {
+    getData: function() {
+      return $http.get('/data/narendramodi')
+      // , function (data) {
+      //   console.log(data)
+      // })
+    }
+  }
+});

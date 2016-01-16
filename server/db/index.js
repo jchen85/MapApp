@@ -1,4 +1,3 @@
-<<<<<<< bc6a815d33e25ddb8a539e874e65bf0190b98a1f
 var fs = require('fs');
 
 var db = require("seraph")({
@@ -199,13 +198,3 @@ db.query(cypher, function(err, results) {
 //   //   });
 //   // });
 // });
-=======
-var mysql = require('mysql');
-
-module.exports = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'wj',
-  database : 'chat'
-});
->>>>>>> merged in the changes from upstream
