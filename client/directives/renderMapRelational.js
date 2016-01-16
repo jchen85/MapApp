@@ -15,7 +15,7 @@ renderMapRelational.directive('renderMapRelational', function(){
       //define function that will inititialize the map
     var initMap = function() {
       if (map === void 0) {
-          d3.json("client/directives/modi.json", function(error,collection) {
+          d3.json("client/directives/reasonableshakira.json", function(error,collection) {
             console.log(collection);
             if (error) { console.log('error reading json', error); }
             function reformat(array){

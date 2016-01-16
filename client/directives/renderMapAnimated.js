@@ -30,7 +30,7 @@ renderMapAnimated.directive('renderMapAnimated', function (Data){
               console.log('reformatted data',data);
               return data;
             }
-            var geoData = {type: 'FeatureCollection', features: reformat(collection.data)};
+            var geoData = {type: 'FeatureCollection', features: reformat(collection)};
             console.log('geoData', geoData)
             var qtree = d3.geom.quadtree(geoData.features.map(function (data, i) {
             return {
@@ -161,7 +161,7 @@ renderMapAnimated.directive('renderMapAnimated', function (Data){
           }).addTo(leafletMap);
         };
           var count2 = 0;
-        collection.data.forEach(function(obj) {
+        collection.forEach(function(obj) {
           count2++;
           if (typeof obj.n.geo[1] === 'number' &&
             typeof obj.n.geo[0] === 'number' &&
@@ -245,10 +245,17 @@ renderMapAnimated.directive('renderMapAnimated', function (Data){
       }
     };
 
-    Data.getData().then(function (data) {
-      console.log(data);
-      initMap(data);
-    });
+    var startFetching = function (screen_name, level) {
+      Data.getData(screen_name).then(function (data) {
+        initMap(data.data.resultsLevel);
+
+        data.data.currentFriends.forEach(function (friend) {
+          Data.getData(friend).then
+        });
+      });
+    };
+
+    startFetching('narendramodi', 1);
 
 
   };
@@ -265,8 +272,8 @@ renderMapAnimated.directive('renderMapAnimated', function (Data){
 
 renderMapAnimated.factory('Data', function ($http) {
   return {
-    getData: function() {
-      return $http.get('/data/narendramodi')
+    getData: function(screen_name) {
+      return $http.get('/data/' + screen_name)
       // , function (data) {
       //   console.log(data)
       // })

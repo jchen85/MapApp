@@ -36,7 +36,7 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
     if (err) return;
 
     if (!data) {
-      return 
+      return;
     }
 
     var users = JSON.parse(data).users;
@@ -64,7 +64,7 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
            + "RETURN n;";
 
       db.query(cypher, function(err, results) {
-        if (err) throw err;
+        if (err) return;
 
         if (results.length > 0) {
           db.relate(child_id, 'follows', results[0].id, function (err, relationship) {
@@ -111,18 +111,18 @@ var saveToNodes = function (parent_screen_name, parent_id, screen_name, child_id
 
 var cypher = ""
      + "MATCH (n) "
-     + "WHERE n.screen_name='" + 'narendramodi' + "' "
+     + "WHERE n.screen_name='" + 'shakira' + "' "
      + "RETURN n;";
 
 db.query(cypher, function(err, results) {
   if (err) throw err;
 
   if (results.length > 0) {
-    saveToNodes('origin', null, 'narendramodi', results[0].id);
+    saveToNodes('origin', null, 'shakira', results[0].id);
   } else {
-    db.save({ 'screen_name': 'narendramodi', 'geo': [ 77.2035555, 28.6151554 ], 'twitter_id': 18839785, 'followers': 17359460 }, function (err, data) { 
+    db.save({ 'screen_name': 'shakira', 'geo': [ 77.2035555, 28.6151554 ], 'twitter_id': 44409004, 'followers': 36338273 }, function (err, data) { 
       if (err) return;
-      saveToNodes('origin', null, 'narendramodi', data.id);
+      saveToNodes('origin', null, 'shakira', data.id);
     });
   }
 });
